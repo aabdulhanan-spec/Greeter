@@ -1,0 +1,98 @@
+SHIP A CONTAINERIZED APP — COMMAND CHECKLIST
+
+1. Git setup
+git init
+git remote add origin YOUR_GITHUB_REPO_URL
+git add .
+git commit -m "Initial greeter app"
+git branch -M main
+git push -u origin main
+
+2. Feature branch / PR
+git checkout -b add-second-line
+git add .
+git commit -m "Add second greeting line"
+git push -u origin add-second-line
+
+Create and merge the PR on GitHub.
+Then:
+git checkout main
+git pull origin main
+
+3. Merge conflict
+git checkout -b change-greeting-1
+# Change greeting
+git add app.py
+git commit -m "Change greeting to Hi"
+
+git checkout main
+git checkout -b change-greeting-2
+# Change the SAME greeting line differently
+git add app.py
+git commit -m "Change greeting to Welcome"
+
+git checkout main
+git merge change-greeting-1
+git merge change-greeting-2
+
+Resolve conflict in app.py, remove conflict markers, then:
+git add app.py
+git commit -m "Resolve greeting merge conflict"
+
+git branch -d change-greeting-1
+git branch -d change-greeting-2
+git push origin main
+
+4. Docker
+git checkout -b dockerize-app
+docker build -t greeter:1.0 .
+docker run -d --name greeter-container -p 8000:8000 greeter:1.0
+docker ps
+docker logs greeter-container
+docker stop greeter-container
+docker rm greeter-container
+
+Commit Docker files and create/merge PR:
+git add Dockerfile .dockerignore
+git commit -m "Containerize greeter app"
+git push -u origin dockerize-app
+
+5. Nginx
+docker run -d --name nginx-container -p 8080:80 nginx
+docker ps
+docker logs nginx-container
+docker stop nginx-container
+docker rm nginx-container
+
+6. Docker Hub
+docker login
+docker tag greeter:1.0 YOUR_DOCKER_USERNAME/greeter:1.0
+docker push YOUR_DOCKER_USERNAME/greeter:1.0
+
+Test from another folder:
+docker run -d --name greeter-v1 -p 8001:8000 YOUR_DOCKER_USERNAME/greeter:1.0
+
+Build/push 1.1:
+docker build -t greeter:1.1 .
+docker tag greeter:1.1 YOUR_DOCKER_USERNAME/greeter:1.1
+docker push YOUR_DOCKER_USERNAME/greeter:1.1
+
+Run both:
+docker run -d --name greeter-v1 -p 8001:8000 YOUR_DOCKER_USERNAME/greeter:1.0
+docker run -d --name greeter-v11 -p 8002:8000 YOUR_DOCKER_USERNAME/greeter:1.1
+
+7. Final
+git checkout main
+git add README.md
+git commit -m "Add project README"
+git push origin main
+
+Commit graph:
+git log --oneline --graph --all --decorate
+
+Docker cleanup:
+docker ps
+docker stop CONTAINER_NAME
+docker rm CONTAINER_NAME
+docker system df
+docker system prune
