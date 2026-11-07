@@ -8,6 +8,7 @@ class Handler(BaseHTTPRequestHandler):
         <body>
             <h1>Hello, Abdul Hanan!</h1>
             <p>Welcome to my Docker project.</p>
+            <p>Today's practice: Git and Docker.</p>
         </body>
         </html>
         """
